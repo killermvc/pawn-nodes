@@ -7,7 +7,7 @@
 		"sampctl/samp-stdlib",
 		"pawn-lang/YSI-Includes@5.x",
 		"killermvc/pawn-vector:3.1.0",
-		"killermvc/pawn-idgen:1.0.3"
+		"killermvc/pawn-idgen:1.0.4"
 	],
 	"runtime": {
 		"version": "0.3.7",

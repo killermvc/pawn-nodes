@@ -17,6 +17,7 @@
 
 enum e_NODES_DATA
 {
+	e_NODES_DATA_NODE_COUNT,
 	e_NODES_DATA_NODE_SIZE,
 	e_NODES_DATA_GENERATOR,
 }
@@ -38,6 +39,16 @@ stock NodeManager_GetNodeSize(NodeM:nodem)
 static stock Idgen:NodeManager_GetNodeGen(NodeM:nodem)
 {
 	return Idgen:Vec_Get(Vec:nodem, e_NODES_DATA_GENERATOR);
+}
+
+static stock NodeManager_SetCount(NodeM:nodem, count)
+{
+	Vec_Set(Vec:nodem, e_NODES_DATA_NODE_COUNT, count);
+}
+
+stock NodeManager_Count(NodeM:nodem)
+{
+	return Vec_Get(Vec:nodem, e_NODES_DATA_NODE_COUNT);
 }
 
 stock NodeM:NodeManager_New(nodeSize = 1, initialCapacity = NODES_DEFAULT_CAPACITY, growth = NODES_DEFAULT_GROWTH)
@@ -67,6 +78,7 @@ stock Node:NodeManager_AddNode(NodeM:nodem, {_,Float,Vec,Idgen,Node,NodeM}:...)
 			Vec_Set(Vec:nodem, _:e_NODES_DATA + index*size + i, getarg(1 + i));
 		}
 	}
+	NodeManager_SetCount(nodem, NodeManager_Count(nodem) + 1);
 	return Node:index;
 }
 
@@ -74,7 +86,6 @@ stock bool:NodeManager_IsValidNode(NodeM:nodem, Node:node)
 {
 	return Idgen_IsValidID(NodeManager_GetNodeGen(nodem), _:node);
 }
-
 
 stock E_NODES_ERROR:NodeManager_SetNodeValue(NodeM:nodem, Node:nodeIndex, dataindex, {_,Float,Vec,Idgen,Node,NodeM}:value)
 {
@@ -99,6 +110,7 @@ stock E_NODES_ERROR:NodeManager_RemoveNode(NodeM:nodem, Node:nodeIndex)
 		Vec_Set(Vec:nodem, _:e_NODES_DATA + _:nodeIndex*nodeSize + i, 0);
 	}
 	Idgen_ReleaseId(generator, _:nodeIndex);
+	NodeManager_SetCount(nodem, NodeManager_Count(nodem) - 1);
 	return E_NODES_ERROR_OK;
 }
 
@@ -122,4 +134,17 @@ stock E_NODES_ERROR:NodeManager_GetNodeData(NodeM:nodem, Node:nodeIndex, node[],
 		node[i] = Vec_Get(Vec:nodem, _:e_NODES_DATA + _:nodeIndex*nodeSize + i);
 	}
 	return E_NODES_ERROR_OK;
+}
+
+stock NodeManager_Clear(NodeM:nodem)
+{
+	memset(Vec_GetAsArray(Vec:nodem, _:e_NODES_DATA), 0, Vec_Len(Vec:nodem));
+	Idgen_Clear(NodeManager_GetNodeGen(nodem));
+	NodeManager_SetCount(nodem, 0);
+}
+
+stock NodeManager_Delete(NodeM:nodem)
+{
+	Idgen_Delete(NodeManager_GetNodeGen(nodem));
+	Vec_Delete(Vec:nodem);
 }

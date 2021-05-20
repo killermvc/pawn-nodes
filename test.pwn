@@ -20,6 +20,9 @@ Test:AddNode()
 	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 1), 2);
 	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 2), 3);
 	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 3), 4);
+	ASSERT_EQ(NodeManager_Count(nodem), 2);
+
+	NodeManager_Delete(nodem);
 }
 
 Test:RemoveNode()
@@ -36,6 +39,9 @@ Test:RemoveNode()
 	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 1), 0);
 	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 2), 3);
 	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 3), 4);
+	ASSERT_EQ(NodeManager_Count(nodem), 1);
+
+	NodeManager_Delete(nodem);
 }
 
 Test:GetNodeValue()
@@ -51,6 +57,8 @@ Test:GetNodeValue()
 	ASSERT_EQ(err2, E_NODES_ERROR_OK);
 	ASSERT_EQ(val1, 1);
 	ASSERT_EQ(val2, 2);
+
+	NodeManager_Delete(nodem);
 }
 
 Test:SetNodeValue()
@@ -68,6 +76,8 @@ Test:SetNodeValue()
 	ASSERT_EQ(err2, E_NODES_ERROR_OK);
 	ASSERT_EQ(val1, 3);
 	ASSERT_EQ(val2, 4);
+
+	NodeManager_Delete(nodem);
 }
 
 Test:GetNodeData()
@@ -80,4 +90,25 @@ Test:GetNodeData()
 	ASSERT_EQ(err, E_NODES_ERROR_OK);
 	ASSERT_EQ(arr[0], 1);
 	ASSERT_EQ(arr[1], 2);
+
+	NodeManager_Delete(nodem);
+}
+
+Test:Clear()
+{
+	new NodeM:nodem = NodeManager_New(2);
+	new Node:node1 = NodeManager_AddNode(nodem, 1, 2);
+	new Node:node2 = NodeManager_AddNode(nodem, 3, 4);
+
+	NodeManager_Clear(nodem);
+
+	ASSERT_EQ(NodeManager_Count(nodem), 0);
+	ASSERT_FALSE(NodeManager_IsValidNode(nodem, node1));
+	ASSERT_FALSE(NodeManager_IsValidNode(nodem, node2));
+	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 0), 0);
+	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 1), 0);
+	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 2), 0);
+	ASSERT_EQ(Vec_Get(Vec:nodem, _:e_NODES_DATA + 3), 0);
+
+	NodeManager_Delete(nodem);
 }
