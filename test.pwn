@@ -94,6 +94,37 @@ Test:GetNodeData()
 	NodeManager_Delete(nodem);
 }
 
+Test:GetNodeData_StartIndex()
+{
+	new NodeM:nodem = NodeManager_New(5);
+	new Node:nodeIdx = NodeManager_AddNode(nodem, 1, 2, 3, 4, 5);
+	new arr[3];
+
+	new E_NODES_ERROR:err = NodeManager_GetNodeData(nodem, nodeIdx, arr, sizeof arr, 2);
+	ASSERT_EQ(err, E_NODES_ERROR_OK);
+	ASSERT_EQ(arr[0], 3);
+	ASSERT_EQ(arr[1], 4);
+	ASSERT_EQ(arr[2], 5);
+
+	NodeManager_Delete(nodem);
+}
+
+Test:GetNodeData_EndIndex()
+{
+	new NodeM:nodem = NodeManager_New(7);
+	new Node:nodeIdx = NodeManager_AddNode(nodem, 1, 2, 3, 4, 5, 6, 7);
+	new arr[4];
+
+	new E_NODES_ERROR:err = NodeManager_GetNodeData(nodem, nodeIdx, arr, sizeof arr, 2, 6);
+	ASSERT_EQ(err, E_NODES_ERROR_OK);
+	ASSERT_EQ(arr[0], 3);
+	ASSERT_EQ(arr[1], 4);
+	ASSERT_EQ(arr[2], 5);
+	ASSERT_EQ(arr[3], 6);
+
+	NodeManager_Delete(nodem);
+}
+
 Test:Clear()
 {
 	new NodeM:nodem = NodeManager_New(2);

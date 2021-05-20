@@ -95,7 +95,7 @@ stock E_NODES_ERROR:NodeManager_SetNodeValue(NodeM:nodem, Node:nodeIndex, datain
 		return E_NODES_ERROR_INVALID_NODE_IDX;
 
 	new nodeSize = NodeManager_GetNodeSize(nodem);
-	Vec_Set(Vec:nodem, _:e_NODES_DATA + _:nodeIndex*nodeSize + dataindex, _:value);
+	Vec_Set(Vec:nodem, _:e_NODES_DATA + _:nodeIndex*nodeSize + dataindex, value);
 	return E_NODES_ERROR_OK;
 }
 
@@ -114,7 +114,7 @@ stock E_NODES_ERROR:NodeManager_RemoveNode(NodeM:nodem, Node:nodeIndex)
 	return E_NODES_ERROR_OK;
 }
 
-stock E_NODES_ERROR:NodeManager_GetNodeValue(NodeM:nodem, Node:nodeIndex, dataIndex, &value)
+stock E_NODES_ERROR:NodeManager_GetNodeValue(NodeM:nodem, Node:nodeIndex, dataIndex, &{_,Float,Vec,Idgen,Node,NodeM}:value)
 {
 	if(!Idgen_IsValidID(NodeManager_GetNodeGen(nodem), _:nodeIndex))
 		return E_NODES_ERROR_INVALID_NODE_IDX;
@@ -123,15 +123,20 @@ stock E_NODES_ERROR:NodeManager_GetNodeValue(NodeM:nodem, Node:nodeIndex, dataIn
 	return E_NODES_ERROR_OK;
 }
 
-stock E_NODES_ERROR:NodeManager_GetNodeData(NodeM:nodem, Node:nodeIndex, node[], arrSize = sizeof node)
+stock E_NODES_ERROR:NodeManager_GetNodeData(NodeM:nodem, Node:nodeIndex,
+	{_,Float,Vec,Idgen,Node,NodeM}:node[], arrSize = sizeof node, startIndex = 0, endIndex = 0)
 {
 	if(!Idgen_IsValidID(NodeManager_GetNodeGen(nodem), _:nodeIndex))
 		return E_NODES_ERROR_INVALID_NODE_IDX;
 	new nodeSize = NodeManager_GetNodeSize(nodem);
-	new size = arrSize <= nodeSize ? arrSize : nodeSize;
-	for(new i = 0; i < size; ++i)
+	new size = arrSize <= nodeSize - startIndex ? arrSize + startIndex : nodeSize;
+	if(endIndex == 0 || endIndex > size)
 	{
-		node[i] = Vec_Get(Vec:nodem, _:e_NODES_DATA + _:nodeIndex*nodeSize + i);
+		endIndex = size;
+	}
+	for(new i = startIndex; i < endIndex; ++i)
+	{
+		node[i - startIndex] = Vec_Get(Vec:nodem, _:e_NODES_DATA + _:nodeIndex * nodeSize + i);
 	}
 	return E_NODES_ERROR_OK;
 }
